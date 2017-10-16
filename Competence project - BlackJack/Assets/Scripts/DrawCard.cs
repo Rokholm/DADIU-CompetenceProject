@@ -32,9 +32,13 @@ public class DrawCard : MonoBehaviour {
 	{
 		//Vector3 center = rend.bounds.center;
 		float radius = rend.bounds.extents.magnitude;
-		float displaceAmount = +radius * 0.5f;
+		float displaceAmount =+ radius;
 
 		return displaceAmount;
+	}
+
+	void SpawnPlayerCard()
+	{
 
 	}
 }
