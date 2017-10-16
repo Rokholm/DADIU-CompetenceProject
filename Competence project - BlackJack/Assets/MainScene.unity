@@ -199,6 +199,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &274113670 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1987570416624214, guid: fa08e377e879e4e4cac3ae4ad7b314de,
@@ -217,12 +218,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 4490551261461810, guid: fa08e377e879e4e4cac3ae4ad7b314de, type: 2}
 --- !u!1001 &885954266
+=======
+--- !u!1001 &573403131
+>>>>>>> master
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+<<<<<<< HEAD
     - target: {fileID: 4490551261461810, guid: fa08e377e879e4e4cac3ae4ad7b314de, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -252,11 +257,46 @@ Prefab:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4490551261461810, guid: fa08e377e879e4e4cac3ae4ad7b314de, type: 2}
+=======
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4478777399998838, guid: e593963c113374a428ba5e7f78505607, type: 2}
+>>>>>>> master
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+<<<<<<< HEAD
   m_ParentPrefab: {fileID: 100100000, guid: fa08e377e879e4e4cac3ae4ad7b314de, type: 2}
+=======
+  m_ParentPrefab: {fileID: 100100000, guid: e593963c113374a428ba5e7f78505607, type: 2}
+>>>>>>> master
   m_IsPrefabParent: 0
 --- !u!1 &1010486264
 GameObject:
@@ -269,6 +309,7 @@ GameObject:
   - component: {fileID: 1010486267}
   - component: {fileID: 1010486266}
   - component: {fileID: 1010486265}
+  - component: {fileID: 1010486269}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -342,6 +383,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &1010486269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1010486264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa86db2626b461f46be1a418bdff281f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  card: {fileID: 1154705676616878, guid: e593963c113374a428ba5e7f78505607, type: 2}
 --- !u!1 &1178555045
 GameObject:
   m_ObjectHideFlags: 0
