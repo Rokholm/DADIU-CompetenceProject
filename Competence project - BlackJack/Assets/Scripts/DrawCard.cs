@@ -1,22 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-<<<<<<< HEAD
-using UnityEngine.Events;
 
-public class DrawCard : MonoBehaviour {
-
-	public Transform card;
-	
-	
-	void Update () {
-		if (Input.GetKeyUp(KeyCode.Space))
-		{
-			Instantiate(card, new Vector3(0, 0, -1), Quaternion.identity);
-		}
-
-	
-=======
 
 public class DrawCard : MonoBehaviour {
 	[SerializeField, Tooltip("Defines the card prefab that should be spawned")]
@@ -50,6 +35,6 @@ public class DrawCard : MonoBehaviour {
 		float displaceAmount = +radius * 0.5f;
 
 		return displaceAmount;
->>>>>>> master
+
 	}
 }
