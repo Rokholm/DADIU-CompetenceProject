@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 public class DrawCard : MonoBehaviour {
+	DeckHandler getNextElement; 
 	[SerializeField, Tooltip("Defines the card prefab that should be spawned")]
 	public GameObject card;
 	private Renderer rend;
@@ -15,17 +16,16 @@ public class DrawCard : MonoBehaviour {
 
 	void Update()
 	{
-
 		if (Input.GetKeyUp(KeyCode.Space))
 		{
-			//Debug.Log("Space key pressed");
 			SpawnCard();
+
 		}
 	}
 
 	void SpawnCard()
 	{
-		Instantiate(card, new Vector3(DisplaceCards(), 0.0f, 0.0f), transform.rotation);
+			Instantiate(card, new Vector3(DisplaceCards(), 0.0f, 0.0f), transform.rotation);
 	}
 
 	float DisplaceCards()

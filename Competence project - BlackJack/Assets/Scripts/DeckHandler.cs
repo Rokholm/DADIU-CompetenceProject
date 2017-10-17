@@ -10,11 +10,12 @@ public class DeckHandler : MonoBehaviour {
 	void Awake()
 	{
 		InitCardNumbers();
-		//Debug.Log(cardNumbers[30]);
 		ShuffleDeck();
+		List <Card> cardData = CardAttributeList();
+		//Debug.Log(cardData[4].getCardID());
 	}
 
-	int [] InitCardNumbers()
+	void InitCardNumbers()
 	{
 		int j = 1;
 		for (int i = 0; i < 52; i++)
@@ -24,8 +25,7 @@ public class DeckHandler : MonoBehaviour {
 			//Debug.Log(cardNumbers[i]);
 			j++;
 		}
-
-		return cardNumbers;
+		return;
 	}
 
 	void ShuffleDeck()
@@ -58,11 +58,65 @@ public class DeckHandler : MonoBehaviour {
 				}
 				emptyDeck[randNum] = cardNumbers[i];
 			}
+
+			return;
+		}
+	}
+
+	struct Card
+	{
+		int cardID;
+		int cardValue;
+		Suits cardSuit;
+		//Prefab cardPrefab
+		
+
+		public Card(int cardID, int cardValue, Suits cardSuit)
+		{
+			this.cardID = cardID;
+			this.cardValue = cardValue;
+			this.cardSuit = cardSuit;
+			//this.cardTexture = cardTexture;
 		}
 
-		/*for (int j = 0; j < emptyDeck.Length; j++)
+		public int getCardID()
 		{
-			Debug.Log(emptyDeck[j]);
-		}*/
+			return cardID;
+		}
+	}
+
+	enum Suits {hearts, clubs, diamonds, spades}
+
+	List<Card> CardAttributeList()
+	{
+		Suits suits = new Suits();
+		List<Card> cardData = new List<Card>();
+
+		for (int i = 1; i < 4; i++)
+		{
+			suits = suits + 1;
+
+			for (int j = 2; j < 14; j++)
+			{
+				if (j > 10)
+				{
+					Card newCard = new Card(i * j, 10, suits);
+					cardData.Add(newCard);
+				}
+
+				else if (j > 13)
+				{
+					Card newCard = new Card(i * j, 11, suits);
+					cardData.Add(newCard);
+				}
+
+				else
+				{
+					Card newCard = new Card(i * j, j, suits);
+					cardData.Add(newCard);
+				}
+			}
+		}
+		return cardData;
 	}
 }
