@@ -36,9 +36,4 @@ public class DrawCard : MonoBehaviour {
 
 		return displaceAmount;
 	}
-
-	void SpawnPlayerCard()
-	{
-
-	}
 }
