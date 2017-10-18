@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerHandManager : MonoBehaviour {
+public class CardManager : MonoBehaviour {
 
 
-	void Start ()
+	void Hit()
 	{
-		
+
 	}
-	
-	void Update ()
+
+	void Stay()
 	{
-		
+
 	}
+
 }
