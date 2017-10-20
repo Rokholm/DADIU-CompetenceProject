@@ -8,7 +8,7 @@ public class CardManager : MonoBehaviour {
 	HandManager dealerManager = new HandManager();
 	string activeHandManager;
 
-	void Hit()
+	/*void Hit()
 	{
 		switch (activeHandManager)
 		{
@@ -22,19 +22,20 @@ public class CardManager : MonoBehaviour {
 				break;
 		}
 
-	}
+	}*/
 
 	void Stay()
 	{
 		//go to next state.
 	}
 
+	//make a boolean instead of void
 	void SetActiveHandManager(string playerName)
 	{
 		activeHandManager = playerName;
 	}
 
-	public HandManager GetHandManager(string playerName)
+	/*public HandManager GetHandManager(string playerName)
 	{
 		switch (playerName)
 		{
@@ -43,5 +44,5 @@ public class CardManager : MonoBehaviour {
 			case "dealer":
 				return dealerManager;
 		}
-	}
+	}*/
 }

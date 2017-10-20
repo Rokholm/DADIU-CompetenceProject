@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeckHandler : MonoBehaviour {
+public class DeckHandler : Singleton<DeckHandler> {
 
 	static public int[] shuffledDeck = new int[52];
 	int[] cardNumbers = new int[52];
+	
+	[SerializeField]
+	List<Card> cardData;
+	DrawCard drawCard;
 
 	void Awake()
 	{
+		drawCard = GetComponent<DrawCard>();
 		InitCardNumbers();
 		ShuffleDeck();
-		List <Card> cardData = CardAttributeList();
+		cardData = CardAttributeList();
 		//Debug.Log(cardData[11].GetCardValue());
 		for (int i = 0; i < 13; i++)
 		{
@@ -33,6 +38,7 @@ public class DeckHandler : MonoBehaviour {
 
 	void ShuffleDeck()
 	{
+		// initialize the shuffledeck array to zero;
 		for (int i = 0; i < cardNumbers.Length; i++)
 		{
 			int randNum = Random.Range(0, 51);
@@ -48,7 +54,7 @@ public class DeckHandler : MonoBehaviour {
 				while (shuffledDeck[randNum] > 0)
 				{
 					randNum += 1;
-					if (randNum == shuffledDeck.Length)
+					if (randNum >= shuffledDeck.Length)
 					{
 						randNum = 0;
 					}
@@ -62,67 +68,48 @@ public class DeckHandler : MonoBehaviour {
 				shuffledDeck[randNum] = cardNumbers[i];
 			}
 		}
+		// check if all the cards are present in the shuffled array. 
+		// See if the array is set to zero beforehand. 
 		//for (int j = 0; j < emptyDeck.Length; j++)
 		//{
 		//	Debug.Log(emptyDeck[j]);
 		//}
 	}
 
-	struct Card
+	public enum Suits
 	{
-		int cardID;
-		int cardValue;
-		Suits cardSuit;
-
-		public Card(int cardID, int cardValue, Suits cardSuit)
-		{
-			this.cardID = cardID;
-			this.cardValue = cardValue;
-			this.cardSuit = cardSuit;
-		}
-
-		public int GetCardID()
-		{
-			return cardID;
-		}
-
-		public int GetCardValue()
-		{
-			return cardValue;
-		}
+		hearts, clubs, diamonds, spades
 	}
-
-	enum Suits {hearts, clubs, diamonds, spades}
 
 	List<Card> CardAttributeList()
 	{
-		Suits suits = new Suits();
-		List<Card> cardData = new List<Card>();
+		Suits suit = new Suits();
+		List<Card> cardsData = new List<Card>();
+		GameObject[] models = drawCard.GetModels();
 
-		for (int i = 1; i < 4; i++)
+		for (int i = 1, cardId = 0; i <= 4; i++, suit += 1)
 		{
-			for (int j = 1; j < 14; j++)
+			for (int j = 1; j < 14; j++, cardId++)
 			{
-				if (j > 12)
+				if (13 == j)
 				{
-					Card newCard = new Card(i * j, 11, suits);
-					cardData.Add(newCard);
+					Card newCard = new Card(cardId, 11, suit,models[cardId]);
+					cardsData.Add(newCard);
 				}
 
 				else if (j > 9)
 				{
-					Card newCard = new Card(i * j, 10, suits);
-					cardData.Add(newCard);
+					Card newCard = new Card(cardId, 10, suit, models[cardId]);
+					cardsData.Add(newCard);
 				}
 
 				else
 				{
-					Card newCard = new Card(i * j, j+1, suits);
-					cardData.Add(newCard);
+					Card newCard = new Card(cardId, j+1, suit, models[cardId]);
+					cardsData.Add(newCard);
 				}
 			}
-			suits = suits + 1;
 		}
-		return cardData;
+		return cardsData;
 	}
 }

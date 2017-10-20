@@ -4,44 +4,34 @@ using UnityEngine;
 
 public class HandManager : MonoBehaviour {
 
-	List<Card> cardHand = new List<Card>();
+	List<Card> cardsInHand = new List<Card>();
 
 	public void AddCardToList(Card newCard)
 	{
-		cardHand.Add(newCard);
+		cardsInHand.Add(newCard);
 	}
 
 	public int Score()
 	{
 		int valueSum = 0;
-		for (int i = 0; i <= cardHand.Count; i++)
+		for (int i = 0; i <= cardsInHand.Count; i++)
 		{
-			valueSum += cardHand[i].GetCardValue();
+			valueSum += cardsInHand[i].GetCardValue();
 		}
 		return valueSum;
 	}
 
-	public struct Card
+	bool CheckForLose()
 	{
-		int cardID;
-		int cardValue;
-		Suits cardSuit;
-
-		public Card(int cardID, int cardValue, Suits cardSuit)
+		if (Score() >  21)
 		{
-			this.cardID = cardID;
-			this.cardValue = cardValue;
-			this.cardSuit = cardSuit;
+			return true;
 		}
 
-		public int GetCardID()
+		else
 		{
-			return cardID;
-		}
-
-		public int GetCardValue()
-		{
-			return cardValue;
+			return false;
 		}
 	}
+
 }
