@@ -7,32 +7,35 @@ public class CardManager : MonoBehaviour {
 	HandManager playerManager = new HandManager();
 	HandManager dealerManager = new HandManager();
 	string activeHandManager;
+	int timesCardHasBeenGiven = 4;
 
-	/*void Hit()
+	public void Hit()
 	{
+																				//
 		switch (activeHandManager)
 		{
 			case "player":
-				playerManager.AddCardToList();
+				playerManager.AddCardToList(DeckHandler.Instance.cardData[DeckHandler.Instance.shuffledDeck[timesCardHasBeenGiven]]);
 				playerManager.Score();
 				break;
 			case "dealer":
-				dealerManager.AddCardToList();
+				dealerManager.AddCardToList(DeckHandler.Instance.cardData[DeckHandler.Instance.shuffledDeck[timesCardHasBeenGiven]]);
 				dealerManager.Score();
 				break;
 		}
 
-	}*/
-
-	void Stay()
-	{
-		//go to next state.
+		timesCardHasBeenGiven = +1;
 	}
 
-	//make a boolean instead of void
-	void SetActiveHandManager(string playerName)
+	public void Stay()
 	{
-		activeHandManager = playerName;
+		GameManager.Instance.GoToNextState();
+	}
+
+	bool SetActiveHandManager(string playerName)
+	{
+		if (playerName == "player")		{ return true;}
+		else							{ return false;}
 	}
 
 	/*public HandManager GetHandManager(string playerName)

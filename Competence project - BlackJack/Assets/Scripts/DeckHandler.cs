@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DeckHandler : Singleton<DeckHandler> {
-
-	static public int[] shuffledDeck = new int[52];
+																				
+	public int[] shuffledDeck = new int[52];
 	int[] cardNumbers = new int[52];
 	
 	[SerializeField]
-	List<Card> cardData;
+	public List<Card> cardData;
 	DrawCard drawCard;
 
 	void Awake()
@@ -17,11 +17,9 @@ public class DeckHandler : Singleton<DeckHandler> {
 		InitCardNumbers();
 		ShuffleDeck();
 		cardData = CardAttributeList();
-		//Debug.Log(cardData[11].GetCardValue());
 		for (int i = 0; i < 13; i++)
 		{
 			//Debug.Log(emptyDeck[i]);
-
 		}
 	}
 
@@ -29,16 +27,20 @@ public class DeckHandler : Singleton<DeckHandler> {
 	{
 		for (int i = 0; i < 52; i++)
 		{
-			//Debug.Log(cardNumbers[i]);
 			cardNumbers[i] = i + 1;
-			//Debug.Log(cardNumbers[i]);
-			
 		}
 	}
 
-	void ShuffleDeck()
+	//ensures shuffledDeck array elements values equal zero, and shuffles
+	//cardNumber values randomly into the shuffleDeck array. 
+	public void ShuffleDeck()
 	{
-		// initialize the shuffledeck array to zero;
+		for (int j = 0; j < shuffledDeck.Length; j++)
+		{
+			shuffledDeck[j] = 0;
+			TestNonZeroValues(j);
+		}
+		
 		for (int i = 0; i < cardNumbers.Length; i++)
 		{
 			int randNum = Random.Range(0, 51);
@@ -68,12 +70,10 @@ public class DeckHandler : Singleton<DeckHandler> {
 				shuffledDeck[randNum] = cardNumbers[i];
 			}
 		}
+	
 		// check if all the cards are present in the shuffled array. 
 		// See if the array is set to zero beforehand. 
-		//for (int j = 0; j < emptyDeck.Length; j++)
-		//{
-		//	Debug.Log(emptyDeck[j]);
-		//}
+		//debug.assert
 	}
 
 	public enum Suits
@@ -81,7 +81,7 @@ public class DeckHandler : Singleton<DeckHandler> {
 		hearts, clubs, diamonds, spades
 	}
 
-	List<Card> CardAttributeList()
+	public List<Card> CardAttributeList()
 	{
 		Suits suit = new Suits();
 		List<Card> cardsData = new List<Card>();
@@ -111,5 +111,19 @@ public class DeckHandler : Singleton<DeckHandler> {
 			}
 		}
 		return cardsData;
+	}
+
+	void TestForAllCardsInArray ()
+	{
+		//Debug.assert or debug.Break
+	}
+
+	void TestNonZeroValues(int index)
+	{
+		if (shuffledDeck[index] != 0)
+		{
+				Debug.Assert(false, "The index values in the array " + 
+							 "are not set to 0!");
+		}
 	}
 }
