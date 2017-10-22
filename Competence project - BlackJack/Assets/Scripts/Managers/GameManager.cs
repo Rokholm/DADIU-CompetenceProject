@@ -3,17 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : Singleton <GameManager> {
-																				//				
-	public enum States{mainMenu, dealingCards, playerTurn,
-					   dealerTurn, playerSplit, endGame,}
+	//				
+	public enum States	{mainMenu, dealingCards, playerTurn,
+						dealerTurn, endGame, playerSplit}
+	
+	[SerializeField]
 	public States currentState;
-	DrawCard DrawCard;
+	DrawCard drawCard;
+	OptionsManager optionsManager; 
+	//ActionsManager actionsManager;
+	//ActionsManager getCardHandmanager;
 	[SerializeField]
 	GameObject actionsCanvas;
+	int numberCardDealt;
 
 	void Awake()
 	{
-		DrawCard = GetComponent<DrawCard>();
+		drawCard = GetComponent<DrawCard>();
+		optionsManager = GetComponent<OptionsManager>();
+		//actionsManager = GetComponent<ActionsManager>();
+		//getCardHandmanager = GetComponent<ActionsManager>();
 	}
 
 	void Start ()
@@ -23,46 +32,61 @@ public class GameManager : Singleton <GameManager> {
 
 	void Update()
 	{
-		/*if(currentState == States.mainMenu) { **********;}
+		if(currentState == States.mainMenu) {}
 		else if(currentState == States.dealingCards) {DealingCards();}
 		else if(currentState == States.playerTurn) {PlayerTurn();}
 		else if(currentState == States.dealerTurn) {DealerTurn();}
 		else if(currentState == States.playerSplit) {PlayerSplit();}
-		else if(currentState == States.endGame) {EndGame();}*/
+		else if(currentState == States.endGame) {EndGame();}
 	}
 
-	void MainMenu()
+	void MainMenu(string menuAction)
 	{
-		
+		Debug.Log("you are now in the main menu");
+		if (menuAction == "play")
+		{
+			currentState = States.dealingCards;
+		}
 	}
 
 	void DealingCards()
 	{
+		numberCardDealt = 0;
+		Debug.Log("you are now in the DealingCards State");
 		DeckHandler.Instance.ShuffleDeck();
-		DrawCard.DealingStateSpawnCard();
+		drawCard.DealingStateSpawnCard(numberCardDealt);
+		optionsManager.DealingStateCardsToList();
 		currentState = States.playerTurn;
 	}
 
 	void PlayerTurn()
 	{
+		numberCardDealt = 4;
+		Debug.Log("you are now in the PlayerTurn State");
 		actionsCanvas.SetActive(true);
-		currentState = States.dealerTurn;
+		if (optionsManager.CheckWinOrLoseCondition() == 2)
+		{
+			currentState = States.endGame;
+		}
 	}
 
 	void DealerTurn()
 	{
+		Debug.Log("you are now in the DealerTurn State");
 		actionsCanvas.SetActive(false);
-		currentState = States.endGame;
+		optionsManager.DealerStateBehaviour();
 	}
 
 	void PlayerSplit()
 	{
+		Debug.Log("you are now in the PlayerSplit State");
 		currentState = States.dealerTurn;
 	}
 
 	void EndGame()
 	{
-		currentState = States.dealingCards;
+		Debug.Log("you are now in the EndGame State");
+		
 	}
 
 	public void GoToNextState()

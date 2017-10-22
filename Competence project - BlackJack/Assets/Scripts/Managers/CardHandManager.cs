@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HandManager : MonoBehaviour {
+public class CardHandManager : MonoBehaviour {
 
-	List<Card> cardsInHand = new List<Card>();
+	/*public List<Card> cardsInHand = new List<Card>();
 
 	public void AddCardToList(Card newCard)
 	{
@@ -34,4 +34,15 @@ public class HandManager : MonoBehaviour {
 		}
 	}
 
+	public void DealerStateBehaviour()
+	{
+		if (dealerManager.Score() < 17) { Hit("dealer"); }
+		else { Stay(); }
+	}
+
+	public void Stay()
+	{
+		GameManager.Instance.GoToNextState();
+	}
+	*/
 }

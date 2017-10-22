@@ -6,6 +6,7 @@ public class DeckHandler : Singleton<DeckHandler> {
 																				
 	public int[] shuffledDeck = new int[52];
 	int[] cardNumbers = new int[52];
+	int[] testAllNumbers = new int [52]; 
 	
 	[SerializeField]
 	public List<Card> cardData;
@@ -17,15 +18,15 @@ public class DeckHandler : Singleton<DeckHandler> {
 		InitCardNumbers();
 		ShuffleDeck();
 		cardData = CardAttributeList();
-		for (int i = 0; i < 13; i++)
+		for (int i = 0; i < shuffledDeck.Length; i++)
 		{
-			//Debug.Log(emptyDeck[i]);
+			//Debug.Log(shuffledDeck[i]);
 		}
 	}
 
 	void InitCardNumbers()
 	{
-		for (int i = 0; i < 52; i++)
+		for (int i = 0; i < cardNumbers.Length; i++)
 		{
 			cardNumbers[i] = i + 1;
 		}
@@ -115,7 +116,19 @@ public class DeckHandler : Singleton<DeckHandler> {
 
 	void TestForAllCardsInArray ()
 	{
-		//Debug.assert or debug.Break
+		for (int i = 0; i < testAllNumbers.Length; i++)
+		{
+			for (int j = 0; j == i; j++)
+			{
+				testAllNumbers[i] = shuffledDeck[j];
+			}
+		}
+
+		for (int k = 0; k < testAllNumbers.Length; k++)
+		{
+
+		}
+		
 	}
 
 	void TestNonZeroValues(int index)
