@@ -2,7 +2,7 @@
 																				
 [System.Serializable]
 public class Card
-{                                                                                   //
+{                                                                                   
 	public int cardID;
 	public int cardValue;
 	public DeckHandler.Suits cardSuit;

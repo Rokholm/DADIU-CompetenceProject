@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//This script has not been made by me (Kristian), for this Dadiu project!
+
 /// <summary>
 /// Be aware this will not prevent a non singleton constructor
 ///   such as `T myT = new T();`
