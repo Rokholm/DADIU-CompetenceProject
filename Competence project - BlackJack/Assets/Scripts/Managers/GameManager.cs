@@ -7,6 +7,7 @@ public class GameManager : Singleton <GameManager> {
 		
 	public enum States
 	{
+		bettingPhase,
 		dealingCards,
 		playerTurn,
 		dealerTurn,
@@ -17,7 +18,6 @@ public class GameManager : Singleton <GameManager> {
 
 	[SerializeField]
 	GameObject actionsCanvas, endGameCanvas;
-	[SerializeField]
 	public States currentState;
 	DrawCard drawCard;
 	BettingController bettingController;
@@ -28,14 +28,20 @@ public class GameManager : Singleton <GameManager> {
 	void Awake()
 	{
 		drawCard = GetComponent<DrawCard>();
+		bettingController = GetComponent<BettingController>();
 		listsAndScores = GetComponent<ListsAndScoreHandler>();
 		actionsHandler = GetComponent<ActionsHandler>();
 	}
 																					
 	void Start ()
 	{
-		currentState = States.dealingCards;
+		currentState = States.bettingPhase;
 		GoToState(currentState);
+	}
+
+	void BettingPhase()
+	{
+		bettingController.Update();
 	}
 
 	void DealingCards()
@@ -76,32 +82,46 @@ public class GameManager : Singleton <GameManager> {
 		endGameCanvas.SetActive(false);
 		listsAndScores.TestIfListsEmpty();
 		actionsHandler.timesCardHasBeenGiven = 4;
-		GoToState(States.dealingCards);
+		GoToState(States.bettingPhase);
 	}
 
 	public void GoToState(States StateToGoTo)
 	{
-		//this could have been made into a Switch
 		currentState = StateToGoTo;
-		if (currentState == States.dealingCards)
+
+		switch (StateToGoTo)
 		{
-			DealingCards();
-		}
-		else if (currentState == States.playerTurn)
-		{
-			PlayerTurn();
-		}
-		else if (currentState == States.dealerTurn)
-		{
-			DealerTurn();
-		}
-		else if (currentState == States.endGame)
-		{
-			EndGame();
-		}
-		else if (currentState == States.resetTable)
-		{
-			ResetTable();
+			case States.bettingPhase:
+				BettingPhase();
+				break;
+
+			case States.dealingCards:
+				DealingCards();
+				break;
+
+			case States.playerTurn:
+				PlayerTurn();
+				break;
+
+			case States.dealerTurn:
+				DealerTurn();
+				break;
+
+			case States.endGame:
+				EndGame();
+				break;
+
+			case States.resetTable:
+				ResetTable();
+				break;
+
+			case States.playerSplit:
+				//PlayerSplit();
+				break;
+
+			default:
+				Debug.Assert(false, "A non-valid State was called");
+				break;
 		}
 	}
 
