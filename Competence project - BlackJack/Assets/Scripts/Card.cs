@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
-																				
+
+//Summary: 
+// Card class containing the constructor for the Card struct.
+
 [System.Serializable]
 public class Card
-{                                                                                   
+{
 	public int cardID;
 	public int cardValue;
 	public DeckHandler.Suits cardSuit;
@@ -16,7 +19,13 @@ public class Card
 		this.model = model;
 	}
 
-	public int GetCardID()			{return cardID;}
+	public int GetCardID()
+	{
+		return cardID;
+	}
 
-	public int GetCardValue()		{return cardValue;}
+	public int GetCardValue()
+	{
+		return cardValue;
+	}
 }

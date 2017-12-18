@@ -1,29 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; 
+using UnityEngine.UI;
 
-public class GameManager : Singleton <GameManager> {
-		
+//Summary:
+//The Gamemanager controls the flow of the game through state changing
+//and calling functions that relate to the individual states in the game. 
+
+public class GameManager : Singleton<GameManager>
+{
+
 	public enum States
 	{
 		bettingPhase,
 		dealingCards,
 		playerTurn,
 		dealerTurn,
-		endGame,
+		endOfHand,
 		resetTable,
-		playerSplit
+		playerSplit,
+		gameOver
 	}
 
 	[SerializeField]
-	GameObject actionsCanvas, endGameCanvas;
-	public States currentState;
+	GameObject actionsCanvas, endOfHandCanvas, gameOverCanvas;
+	[SerializeField]
+	Text gameOverText;
+	Button uiSplitHand;
 	DrawCard drawCard;
 	BettingController bettingController;
 	ActionsHandler actionsHandler;
 	ListsAndScoreHandler listsAndScores;
 	int numberOfCardsDealt;
+	[HideInInspector]
+	public string winType;
+	public States currentState;
+	bool splitEnabled, hasSplit = false;
 
 	void Awake()
 	{
@@ -32,21 +44,42 @@ public class GameManager : Singleton <GameManager> {
 		listsAndScores = GetComponent<ListsAndScoreHandler>();
 		actionsHandler = GetComponent<ActionsHandler>();
 	}
-																					
-	void Start ()
+
+	void Start()
 	{
 		currentState = States.bettingPhase;
 		GoToState(currentState);
 	}
 
-	void BettingPhase()
+	private void Update()
 	{
-		bettingController.Update();
+		if (currentState == States.playerTurn)
+		{
+			//listsAndScores.CheckForSplit();
+			splitEnabled = actionsHandler.splitEnabled;
+			if (splitEnabled == true)
+			{
+				if (hasSplit == true)
+				{
+					drawCard.SplitMoveCardsApart();
+					Debug.Log("Move cards apart called");
+				}
+				else
+				{
+					listsAndScores.TransferCardIntoSecondHand();
+					uiSplitHand = listsAndScores.uiSplitHand;
+					uiSplitHand.enabled = true;
+					Debug.Log("Transfer Cards into list called");
+					hasSplit = true;
+					
+				}
+			}
+		}
 	}
 
 	void DealingCards()
 	{
-		endGameCanvas.SetActive(false);
+		endOfHandCanvas.SetActive(false);
 		numberOfCardsDealt = 0;
 		DeckHandler.Instance.ShuffleDeck();
 		StartCoroutine(drawCard.DealingStateSpawnCard(numberOfCardsDealt));
@@ -71,7 +104,10 @@ public class GameManager : Singleton <GameManager> {
 	void EndGame()
 	{
 		Debug.Log("you are now in the EndGame State");
-		endGameCanvas.SetActive(true);
+		endOfHandCanvas.SetActive(true);
+		winType = listsAndScores.winType;
+		print(winType);
+		bettingController.AddReturnsToFunds(winType);
 	}
 
 	void ResetTable()
@@ -79,10 +115,20 @@ public class GameManager : Singleton <GameManager> {
 		drawCard.ResetCardSpawns();
 		listsAndScores.ResetLists(true);
 		listsAndScores.ResetLists(false);
-		endGameCanvas.SetActive(false);
+		listsAndScores.SplitCardsInSecondHand.Clear();
+		endOfHandCanvas.SetActive(false);
 		listsAndScores.TestIfListsEmpty();
 		actionsHandler.timesCardHasBeenGiven = 4;
+		actionsHandler.splitEnabled = false;
+		hasSplit = false;
 		GoToState(States.bettingPhase);
+
+	}
+
+	void GameOver()
+	{
+		gameOverCanvas.SetActive(true);
+		gameOverText.text = "Looks like you ran out of money";
 	}
 
 	public void GoToState(States StateToGoTo)
@@ -92,7 +138,6 @@ public class GameManager : Singleton <GameManager> {
 		switch (StateToGoTo)
 		{
 			case States.bettingPhase:
-				BettingPhase();
 				break;
 
 			case States.dealingCards:
@@ -107,7 +152,7 @@ public class GameManager : Singleton <GameManager> {
 				DealerTurn();
 				break;
 
-			case States.endGame:
+			case States.endOfHand:
 				EndGame();
 				break;
 
@@ -116,7 +161,10 @@ public class GameManager : Singleton <GameManager> {
 				break;
 
 			case States.playerSplit:
-				//PlayerSplit();
+				break;
+
+			case States.gameOver:
+				GameOver();
 				break;
 
 			default:
@@ -125,7 +173,12 @@ public class GameManager : Singleton <GameManager> {
 		}
 	}
 
-	public void PlayAgain()
+	private void CheckIfSplitCorrect()
+	{
+
+	}
+
+	public void PlayNextHand()
 	{
 		GoToState(States.resetTable);
 	}

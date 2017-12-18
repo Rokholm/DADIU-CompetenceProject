@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Summary:
+//Manages the player's available money, together with the player's
+//bet for the current hand. It also returns the winning based on the
+//type of win that has been achieved.
+
 public class BettingController : MonoBehaviour
 {
-	//[SerializeField]
-	//Button increaseBet1, decreaseBet1, increaseBet5, decreaseBet5, currentbet;
 	[SerializeField]
-	int betMoney = 0;
 	int funds = 10;
 	int tempBet = 1;
 	[SerializeField]
-	Text text, text2;
+	Text initialBet, totalMoney;
 
 	public int Funds
 	{
@@ -23,64 +25,52 @@ public class BettingController : MonoBehaviour
 		set
 		{
 			funds = value;
-		}  
+		}
 	}
 
 	void UpdateTotalMoney()
 	{
-		text2.text = Funds.ToString();
+		totalMoney.text = Funds.ToString();
 	}
 
 	void UpdateBetText()
 	{
-		text.text = tempBet.ToString();
+		initialBet.text = tempBet.ToString();
 	}
-	
+
 	public void Update()
 	{
-		if (GameManager.Instance.currentState == 
+		if (GameManager.Instance.currentState ==
 			GameManager.States.bettingPhase)
 		{
 			UpdateTotalMoney();
 			PlaceBet(Funds);
 
-			if (Input.GetKeyUp(KeyCode.Return))
+			if (Input.GetKeyUp(KeyCode.Return) && tempBet > 0)
 			{
 				LockDownBet();
+				UpdateTotalMoney();
 			}
 		}
-
 		if (Funds <= 0)
 		{
 			OutOfMoney();
 		}
-		// Get a trigger for the betting state. (Check)
-
-		// Make player able to place a bet on the hand. (Maybe)
-
-		// Tell the gameManager to go to next state. (Check)
-
-		// Recieve data from gameManager on the win & type of win
-		// 21 or split, or regular.
-
-		//update the funds variable based on returns / losses.
-		
 	}
 
 	void PlaceBet(int totalMoney)
 	{
-			if (Input.GetKeyUp(KeyCode.W) && tempBet < totalMoney )
-			{
-				tempBet += 1;
-				UpdateBetText();
-			}
-			else if (Input.GetKeyUp(KeyCode.S) && tempBet > 0)
-			{
-				tempBet -= 1;
-				UpdateBetText();
-			}
+		if (Input.GetKeyUp(KeyCode.W) && tempBet < totalMoney)
+		{
+			tempBet += 1;
+			UpdateBetText();
+		}
+		else if (Input.GetKeyUp(KeyCode.S) && tempBet > 1)
+		{
+			tempBet -= 1;
+			UpdateBetText();
+		}
 	}
-
 
 	void LockDownBet()
 	{
@@ -88,65 +78,58 @@ public class BettingController : MonoBehaviour
 		GameManager.Instance.GoToState(GameManager.States.dealingCards);
 	}
 
-	int CalculateReturns(bool blackJack, int sizeOfBet)
+	public void AddReturnsToFunds(string winType)
+	{
+		funds += CalculateReturns(winType, tempBet);
+		UpdateTotalMoney();
+	}
+
+	int CalculateReturns(string winType, int sizeOfBet)
 	{
 		int betReturns = 0;
-		if (blackJack == true)
+		switch (winType)
 		{
-			betReturns = Mathf.FloorToInt(sizeOfBet * 1.5f);
+			case "Regular":
+				betReturns = sizeOfBet * 2;
+				return betReturns;
+
+			case "BlackJack":
+				betReturns = Mathf.FloorToInt(sizeOfBet * 1.5f);
+				return betReturns;
+
+			case "1HandSplit":
+				return betReturns;
+
+			case "2HandSplit":
+				betReturns = betReturns * 2;
+				return betReturns;
+				
+			case "Equal":
+				betReturns = sizeOfBet;
+				return betReturns;
+
+			case "PlayerLost":
+				return betReturns;
+
+			default:
+				Debug.Assert(false, "No valid win type was achieved");
+				break;
 		}
-		else
-		{
-			betReturns = sizeOfBet;
-		}
-		return betReturns;
+		return 0;
+	}
+
+	public void SplitBet()
+	{
+		Funds = Funds - tempBet;
+		UpdateTotalMoney();
+		tempBet = tempBet * 2;
+		UpdateBetText();
 	}
 
 	void OutOfMoney()
 	{
-		GameManager.Instance.GoToState(GameManager.States.endGame);
+		GameManager.Instance.GoToState(GameManager.States.gameOver);
 	}
-
-	//void BetButtonControl(int totalMoney, int betMoney)
-	//{
-	//	if (betMoney > totalMoney)
-	//	{
-	//		increaseBet1.interactable = false;
-	//		increaseBet5.interactable = false;
-	//	}
-	//	else if (betMoney <= 0)
-	//	{
-	//		decreaseBet1.interactable = false;
-	//		decreaseBet5.interactable = false;
-	//	}
-	//	else
-	//	{
-	//		increaseBet1.interactable = true;
-	//		increaseBet5.interactable = true;
-	//		decreaseBet1.interactable = true;
-	//		decreaseBet5.interactable = true;
-	//	}
-	//}
-
-	/*public void AddOneToBet()
-	{
-		betMoney += 1;
-	}
-
-	public void SubtractOneFromBet()
-	{
-		betMoney -= 1;
-	}
-
-	public void SubtractfiveToBet()
-	{
-		betMoney -= 1;
-	}
-
-	public void AddFiveToBet()
-	{
-		betMoney += 1;
-	}*/
 }
 
 

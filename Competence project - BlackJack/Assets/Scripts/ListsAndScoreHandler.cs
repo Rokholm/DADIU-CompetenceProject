@@ -3,18 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Summary:
+//Calls and handles the lists that player and dealer cards are saved in.
+//Also keeps track of the scores for player and dealer, together
+//with the dealer decision making based on these. 
+
 public class ListsAndScoreHandler : MonoBehaviour
 {
 	public List<Card> playerCardsInHand = new List<Card>();
+	public List<Card> SplitCardsInSecondHand = new List<Card>();
 	public List<Card> dealerCardsInHand = new List<Card>();
 	[SerializeField]
-	private Text scoreTextPlayer, scoreTextDealer, endGameText;
+	private Text scoreTextPlayer, scoreTextDealer, endGameText, scoreSplitHand;
+	[SerializeField]
+	private Button splitButton;
+	public Button uiSplitHand;
 	ActionsHandler actionsHandler;
-																				
+	public string winType;
+
 	private void Awake()
 	{
 		actionsHandler = GetComponent<ActionsHandler>();
 	}
+
+	public enum WinOrLose
+	{
+		noWinner,
+		playerWon,
+		blackJack,
+		equal,
+		dealerBust,
+		playerBust,
+		dealerWin,
+		playerWinSplitHand,
+		playerWinSplitHands
+	}
+
+	public WinOrLose typeOfWin;
 
 	public void DealingStateCardsToList()
 	{
@@ -32,31 +57,61 @@ public class ListsAndScoreHandler : MonoBehaviour
 
 	public void PlayerAddCardToList(Card newCard)
 	{
-		playerCardsInHand.Add(newCard);
+		if (GameManager.Instance.currentState == GameManager.States.playerSplit)
+		{
+			SplitCardsInSecondHand.Add(newCard);
+		}
+		else
+		{
+			playerCardsInHand.Add(newCard);
+		}
 	}
 
 	public void DealerAddCardToList(Card newCard)
 	{
 		dealerCardsInHand.Add(newCard);
 	}
-																																											
 
-	public int PlayerScore()
+	public int PlayerScore(bool primaryHand)
 	{
+		List<Card> currentList = new List<Card>();
 		int valueSum = 0;
-		for (int i = 0; i < playerCardsInHand.Count; i++)
+		Text scoreText;
+
+		if (primaryHand == true)
 		{
-			if (playerCardsInHand[i].GetCardValue() == 11
+			currentList = playerCardsInHand;
+			scoreText = scoreTextPlayer;
+		}
+		else
+		{
+			currentList = SplitCardsInSecondHand;
+			scoreText = scoreSplitHand;
+		}
+		for (int i = 0; i < currentList.Count; i++)
+		{
+			if (currentList[i].GetCardValue() == 11
 				&& (valueSum + 11) > 21)
 			{
 				valueSum += 1;
 			}
 			else
 			{
-				valueSum += playerCardsInHand[i].GetCardValue();
+				valueSum += currentList[i].GetCardValue();
+			}
+			//checks if a previous card was an Ace, and corrects to one on playerbust.
+			if (valueSum + currentList[i].GetCardValue() > 21)
+			{
+				for (int j = 0; j < currentList.Count; j++)
+				{
+					if (currentList[j].GetCardValue() == 11)
+					{
+						valueSum -= 10;
+					}
+				}
 			}
 		}
-		scoreTextPlayer.text = valueSum.ToString();
+		scoreText.text = valueSum.ToString();
 		return valueSum;
 	}
 
@@ -83,7 +138,7 @@ public class ListsAndScoreHandler : MonoBehaviour
 			}
 		}
 		if (GameManager.Instance.currentState == GameManager.States.dealerTurn ||
-			GameManager.Instance.currentState == GameManager.States.endGame)
+			GameManager.Instance.currentState == GameManager.States.endOfHand)
 		{
 			valueSum = valueSum + faceDownCard;
 			scoreTextDealer.text = valueSum.ToString();
@@ -96,54 +151,103 @@ public class ListsAndScoreHandler : MonoBehaviour
 		return valueSum;
 	}
 
-	//make this a enum, so it becomes less likely to be confused with 
-	// a meaningful number in the game.
-
 	public void CheckWinOrLose()
 	{
-		int winOrLose = 0;
-
-		if (PlayerScore() >= DealerScore() && PlayerScore() <= 21
-			&& GameManager.Instance.currentState == GameManager.States.endGame)
+		//Checks for Player Bust
+		if (PlayerScore(true) > 21)
 		{
-			winOrLose = 1;
+			scoreTextPlayer.text = "Bust!";
+			if (SplitCardsInSecondHand.Count != 0)
+			{
+				// Checks for Player Bust while split
+				if (PlayerScore(false) > 21)
+				{
+					scoreSplitHand.text = "Bust!";
+					typeOfWin = WinOrLose.playerBust;
+				}
+				else if (SplitCardsInSecondHand.Count != 0)
+				{
+					GameManager.Instance.GoToState(GameManager.States.playerSplit);
+				}
+			}
+			else
+			{
+				typeOfWin = WinOrLose.playerBust;
+			}
 		}
-		else if (PlayerScore() > 21)
-		{
-			winOrLose = 2;
-		}
+		//Checks for dealer bust
 		else if (DealerScore() > 21)
 		{
-			winOrLose = 3;
+			typeOfWin = WinOrLose.dealerBust;
 		}
-		else if (PlayerScore() < DealerScore() && 
-				GameManager.Instance.currentState == GameManager.States.endGame)
+		//Checks for player win 
+		else if (PlayerScore(true) > DealerScore() && PlayerScore(true) <= 21
+			&& GameManager.Instance.currentState == GameManager.States.dealerTurn)
 		{
-			winOrLose = 4;
+			if (PlayerScore(true) == 21 && SplitCardsInSecondHand.Count != 0)
+			{
+				typeOfWin = WinOrLose.blackJack;
+			}
+			else
+			{
+				typeOfWin = WinOrLose.playerWinSplitHand;
+			}
+		}
+		else if (PlayerScore(true) == DealerScore() &&
+				GameManager.Instance.currentState == GameManager.States.endOfHand)
+		{
+			typeOfWin = WinOrLose.equal;
+		}
+		else if (PlayerScore(true) < DealerScore() &&
+				GameManager.Instance.currentState == GameManager.States.endOfHand)
+		{
+			if (PlayerScore(false) < DealerScore() || SplitCardsInSecondHand.Count == 0)
+			{
+				typeOfWin = WinOrLose.dealerWin;
+			}
 		}
 
-		switch (winOrLose)
+		switch (typeOfWin)
 		{
-			case 1:
+			case WinOrLose.playerWon:
 				endGameText.text = "Congratulations, You won the hand!";
+				winType = "Regular";
 				break;
 
-			case 2:
+			case WinOrLose.equal:
+				endGameText.text = "Your score and the Dealer's are equal, neither wins";
+				winType = "Equal";
+				break;
+
+			case WinOrLose.playerBust:
 				endGameText.text = "Sorry the dealer wins, You went over 21! ";
-				actionsHandler.PlayerStay();
+				winType = "PlayerLost";
+				GameManager.Instance.GoToState(GameManager.States.endOfHand);
 				break;
 
-			case 3:
+			case WinOrLose.dealerBust:
 				endGameText.text = "Dealer above 21, You won the hand";
-				actionsHandler.EndDealerTurn();
+				scoreTextDealer.text = "Bust";
+				winType = "Regular";
+				GameManager.Instance.GoToState(GameManager.States.endOfHand);
 				break;
 
-			case 4:
+			case WinOrLose.dealerWin:
 				endGameText.text = "The dealer won the hand";
+				winType = "PlayerLost";
+				break;
+
+			case WinOrLose.blackJack:
+				endGameText.text = "Hurray, you won the hand with Black Jack!";
+				winType = "BlackJack";
+				break;
+
+			case WinOrLose.noWinner:
+				Debug.Log("no winner found yet");
 				break;
 
 			default:
-				Debug.Assert(false, "A non-existing Win/Lose condition" + 
+				Debug.Assert(false, "A non-existing Win/Lose condition" +
 							"was achieved");
 				break;
 		}
@@ -151,7 +255,7 @@ public class ListsAndScoreHandler : MonoBehaviour
 
 	public IEnumerator DealerStateBehaviour()
 	{
-		if (PlayerScore() > 21)
+		if (PlayerScore(true) > 21)
 		{
 			yield return new WaitForSeconds(1);
 			actionsHandler.EndDealerTurn();
@@ -165,6 +269,7 @@ public class ListsAndScoreHandler : MonoBehaviour
 			yield return new WaitForSeconds(1);
 			actionsHandler.EndDealerTurn();
 		}
+
 	}
 
 	public void ResetLists(bool playerList)
@@ -179,11 +284,11 @@ public class ListsAndScoreHandler : MonoBehaviour
 		}
 	}
 
-	 void UpdateScoreText(bool playerScore)
+	void UpdateScoreText(bool playerScore)
 	{
 		if (playerScore == true)
 		{
-			scoreTextPlayer.text = PlayerScore().ToString();
+			scoreTextPlayer.text = PlayerScore(true).ToString();
 		}
 		else
 		{
@@ -213,6 +318,23 @@ public class ListsAndScoreHandler : MonoBehaviour
 		Debug.Assert(playerListEmpty, "playerCardsInHand list has not been emptied");
 		Debug.Assert(dealerListEmpty, "dealerCardsInHand list has not been emptied");
 	}
-}
-																					
 
+	public void CheckForSplit()
+	{
+		if (playerCardsInHand[0].cardValue == playerCardsInHand[1].cardValue &&
+			playerCardsInHand.Count < 3)
+		{
+			splitButton.interactable = true;
+		}
+	}
+
+	public void TransferCardIntoSecondHand()
+	{
+		SplitCardsInSecondHand.Insert(0, playerCardsInHand[1]);
+		playerCardsInHand.Remove(playerCardsInHand[1]);
+		PlayerScore(true);
+		PlayerScore(false);
+	}
+
+	// check if playerListInHand had the same value in (1), as InSecondHand has in (0)
+}

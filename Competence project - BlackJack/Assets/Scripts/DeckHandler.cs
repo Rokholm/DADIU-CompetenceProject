@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeckHandler : Singleton<DeckHandler> {
-																				
+//Summary:
+//Singleton class that handles the shuffling of the virtual
+//deck of cards and the contruction of the list of each card's
+//attributes.
+
+public class DeckHandler : Singleton<DeckHandler>
+{
+
 	public int[] shuffledDeck = new int[52];
 	int[] cardNumbers = new int[52];
-	int[] testAllNumbers = new int [52]; 
-	
+	int[] testAllNumbers = new int[52];
+
 	[SerializeField]
 	public List<Card> cardData;
 	DrawCard drawCard;
@@ -37,7 +43,7 @@ public class DeckHandler : Singleton<DeckHandler> {
 			shuffledDeck[j] = 0;
 			TestNonZeroValues(j);
 		}
-																						
+
 		for (int i = 0; i < cardNumbers.Length; i++)
 		{
 			int randNum = Random.Range(0, 51); // should be 52
